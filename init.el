@@ -6,9 +6,19 @@
 (tooltip-mode -1)
 (set-fringe-mode 10)
 
+(column-number-mode)
+(global-display-line-numbers-mode t)
+
+(dolist (mode '(org-mode-hook
+                term-mode-hook
+                shell-mode-hook
+                eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
 (setq visible-bell t)
 
 (load-theme 'wombat)
+
 
 (require 'package)
 
@@ -27,8 +37,9 @@
 (setq use-package-always-ensure t)
 
 (use-package ivy
-	     :config
-	     (ivy-mode 1))
+  :bind (("C-s" . swiper))
+  :config
+  (ivy-mode 1))
 
 (use-package which-key
   :init (which-key-mode)
@@ -62,6 +73,29 @@
 
 
 (use-package magit)
+
+;; (use-package all-the-icons)
+
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  ;; NOTE: Set this to the folder where you keep your Git repos!
+  ;; (when (file-directory-p "~/Projects/Code")
+  ;;   (setq projectile-project-search-path '("~/Projects/Code")))
+  (setq projectile-switch-project-action #'projectile-dired))
+
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
+
+
+(use-package magit
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
