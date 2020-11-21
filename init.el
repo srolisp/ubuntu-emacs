@@ -16,6 +16,16 @@
 (scroll-bar-mode -1)
 (tooltip-mode -1)
 
+(column-number-mode)
+(global-display-line-numbers-mode t)
+;; TODO: add for pdf something mode. can't remember that mode.
+(dolist (mode '(org-mode-hook
+		term-mode-hook
+		shell-mode-hook
+		treemacs-mode-hook
+		eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
 (set-background-color "#002b00")
 (set-foreground-color "#ffe97a")
 
@@ -26,3 +36,55 @@
 (when window-system
   (set-frame-parameter (selected-frame) 'alpha (list 80 80))
   (add-to-list 'default-frame-alist `(alpha . 80)))
+
+(setq backup-directory-alist `(("." . ,(concat user-emacs-directory ".saves"))))
+
+(require 'package)
+
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			 ("org" . "https://orgmode.org/elpa/")
+			 ("elpa" . "https://elpa.gnu.org/packages/")))
+
+(package-initialize)
+(unless package-archive-contents
+  (package-refresh-contents))
+
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+
+(require 'use-package)
+
+(use-package ivy
+  :bind (("C-s" . swiper))
+  :init
+  (ivy-mode 1))
+
+(use-package ivy-rich
+  :init
+  (ivy-rich-mode 1))
+
+(use-package counsel
+  :bind (("M-x" . counsel-M-x)
+	 ;; ("C-x b" . counsel-ibuffer)
+	 ("C-x C-b" . counsel-switch-buffer)
+	 ;; :map minibuffer-local-map
+	 ("C-c r" . counsel-minibuffer-history)
+	 )
+  :config
+  (counsel-mode 1))
+
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 1))
+
+(use-package helpful
+  :custom
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :bind
+  ([remap describe-function] . counsel-describe-function)
+  ([remap describe-command] . helpful-command)
+  ([remap describe-variable] . counsel-describe-variable)
+  ([remap describe-key] . helpful-key))

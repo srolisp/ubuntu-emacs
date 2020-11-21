@@ -1,18 +1,20 @@
 #+title: emacs configurations
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
 
-* adjust to init.el after saving settings.org
+* Adjust to init.el after saving settings.org
 
 ** org file property 설정
-   tangle 로 org-babel-tangle에 의해 코드들을 저장할 파일을
+   tangle로 org-babel-tangle에 의해 코드들을 저장할 파일을
    지정해준다. ~/.emacs.d/org/settings.org 파일 수정후 저장하면
    ~/.emacs.d/init.el에 적용된다. header-args:emacs-lisp 에 의해
    소스블락이 emacs-lisp의 경우에 적용된다. mkdirp yes 옵션으로
    디렉토리가 없으면 생성시킨다.
-   #+begin_quote
+
+   #+begin_verse
+     settings.org 파일 상단에
      #+title: emacs configurations
      #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el :mkdirp yes
-   #+end_quote
+   #+end_verse
 
    #+begin_src emacs-lisp
      (defun xr-org-babel-tangle-config ()
@@ -27,7 +29,7 @@
      (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'xr-org-babel-tangle-config)))
    #+end_src
 
-* basic setup
+* Basic setup
   #+begin_src emacs-lisp
     (setq inhibit-startup-message t)
 
@@ -46,6 +48,51 @@
     (when window-system
       (set-frame-parameter (selected-frame) 'alpha (list 80 80))
       (add-to-list 'default-frame-alist `(alpha . 80)))
+
+      (setq backup-directory-alist `(("." . ,(concat user-emacs-directory ".saves"))))      
+
   #+END_src
 
-  
+* package
+  package 관리를 use-package를 써서 관리해보자
+  #+begin_src emacs-lisp
+    (require 'package)
+
+    (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			     ("org" . "https://orgmode.org/elpa/")
+			     ("elpa" . "https://elpa.gnu.org/packages/")))
+
+    (package-initialize)
+    (unless package-archive-contents
+      (package-refresh-contents))
+
+    (unless (package-installed-p 'use-package)
+      (package-install 'use-package))
+
+    (require 'use-package)
+  #+end_src
+
+** ivy
+   #+begin_src emacs-lisp
+     (use-package ivy
+       :bind (("C-s" . swiper))
+       :init
+       (ivy-mode 1))
+       
+     (use-package ivy-rich
+       :init
+       (ivy-rich-mode 1))
+   #+end_src
+
+** counsel
+   #+begin_src emacs-lisp
+     (use-package counsel
+       :bind (("M-x" . counsel-M-x)
+	      ;; ("C-x b" . counsel-ibuffer)
+	      ("C-x C-b" . counsel-switch-buffer)
+	      ;; :map minibuffer-local-map
+	      ("C-c r" . counsel-minibuffer-history)
+	      )
+       :config
+       (counsel-mode 1))
+   #+end_src
