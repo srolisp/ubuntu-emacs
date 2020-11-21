@@ -17,6 +17,7 @@
   (tooltip-mode -1)
 
   (column-number-mode)
+  (display-battery-mode 1)
   (global-display-line-numbers-mode t)
   ;; TODO: add for pdf something mode. can't remember that mode.
   (dolist (mode '(org-mode-hook
@@ -57,6 +58,7 @@
   (package-install 'use-package))
 
 (require 'use-package)
+(setq use-package-always-ensure t)
 
 (use-package ivy
   :bind (("C-s" . swiper))

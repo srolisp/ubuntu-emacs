@@ -39,6 +39,7 @@
       (tooltip-mode -1)
 
       (column-number-mode)
+      (display-battery-mode 1)
       (global-display-line-numbers-mode t)
       ;; TODO: add for pdf something mode. can't remember that mode.
       (dolist (mode '(org-mode-hook
@@ -86,6 +87,7 @@
       (package-install 'use-package))
 
     (require 'use-package)
+    (setq use-package-always-ensure t)
   #+end_src
 
 ** ivy
@@ -147,3 +149,24 @@
        :bind (("C-c m g" . magit-status)))
    #+end_src
    
+** COMMENT exwm
+   #+begin_src emacs-lisp
+   (use-package exwm
+       :config
+       (setq exwm-workspace-number 5)
+       ;; (require 'exwm-randr)
+       ;; (exwm-randr-enable)
+       ;; These keys should always pass through to Emacs
+       (setq exwm-input-prefix-keys
+	     '(?\C-x
+	       ?\C-u
+	       ?\C-h
+	       ?\M-x
+	       ?\M-`
+	       ?\M-&
+	       ?\M-:
+	       ?\C-\M-j  ;; Buffer list
+	       ?\C-\ ))
+	    (exwm-enable))
+   #+end_src
+
