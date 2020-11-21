@@ -31,25 +31,41 @@
 
 * Basic setup
   #+begin_src emacs-lisp
-    (setq inhibit-startup-message t)
+      (setq inhibit-startup-message t)
 
-    (tool-bar-mode -1)
-    (menu-bar-mode -1)
-    (scroll-bar-mode -1)
-    (tooltip-mode -1)
+      (tool-bar-mode -1)
+      (menu-bar-mode -1)
+      (scroll-bar-mode -1)
+      (tooltip-mode -1)
 
-    (set-background-color "#002b00")
-    (set-foreground-color "#ffe97a")
+      (column-number-mode)
+      (global-display-line-numbers-mode t)
+      ;; TODO: add for pdf something mode. can't remember that mode.
+      (dolist (mode '(org-mode-hook
+		      term-mode-hook
+		      shell-mode-hook
+		      treemacs-mode-hook
+		      eshell-mode-hook
+		      vterm-mode-hook))
+	(add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-    (set-face-attribute 'default nil 
-			:family "fixed"
-			:height 98)
+      (set-background-color "#002b00")
+      (set-foreground-color "#ffe97a")
 
-    (when window-system
-      (set-frame-parameter (selected-frame) 'alpha (list 80 80))
-      (add-to-list 'default-frame-alist `(alpha . 80)))
+      (set-face-attribute 'default nil 
+			  :family "fixed"
+			  :height 98)
+
+    (set-fontset-font t 'hangul (font-spec :name "NanumGothicCoding"))
+    (set-face-font 'default ":antialias=false")
+    
+      (when window-system
+	(set-frame-parameter (selected-frame) 'alpha (list 80 80))
+	(add-to-list 'default-frame-alist `(alpha . 80)))
 
       (setq backup-directory-alist `(("." . ,(concat user-emacs-directory ".saves"))))      
+
+
 
   #+END_src
 
@@ -96,3 +112,38 @@
        :config
        (counsel-mode 1))
    #+end_src
+
+** whick-key
+   #+begin_src emacs-lisp
+     (use-package which-key
+       :init (which-key-mode)
+       :diminish which-key-mode
+       :config
+       (setq which-key-idle-delay 1))
+   #+end_src
+
+** helpful
+   #+begin_src emacs-lisp
+     (use-package helpful
+       :custom
+       (counsel-describe-function-function #'helpful-callable)
+       (counsel-describe-variable-function #'helpful-variable)
+       :bind
+       ([remap describe-function] . counsel-describe-function)
+       ([remap describe-command] . helpful-command)
+       ([remap describe-variable] . counsel-describe-variable)
+       ([remap describe-key] . helpful-key))
+   #+end_src
+
+** vterm
+   #+begin_src emacs-lisp
+     (use-package vterm
+       :ensure t)
+   #+end_src
+
+** magit
+   #+begin_src emacs-lisp
+     (use-package magit
+       :bind (("C-c m g" . magit-status)))
+   #+end_src
+   

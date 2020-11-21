@@ -1,2 +1,2 @@
-* TODO apply anti-aliasing to hangul font in emacs
+* DONE apply anti-aliasing to hangul font in emacs
 
