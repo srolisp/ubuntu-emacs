@@ -30,6 +30,7 @@
 
   (set-background-color "#002b00")
   (set-foreground-color "#ffe97a")
+  (set-cursor-color "red3")
 
   (set-face-attribute 'default nil 
 		      :family "fixed"

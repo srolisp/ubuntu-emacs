@@ -52,6 +52,7 @@
 
       (set-background-color "#002b00")
       (set-foreground-color "#ffe97a")
+      (set-cursor-color "red3")
 
       (set-face-attribute 'default nil 
 			  :family "fixed"
@@ -149,24 +150,27 @@
        :bind (("C-c m g" . magit-status)))
    #+end_src
    
-** COMMENT exwm
-   #+begin_src emacs-lisp
-   (use-package exwm
-       :config
-       (setq exwm-workspace-number 5)
-       ;; (require 'exwm-randr)
-       ;; (exwm-randr-enable)
-       ;; These keys should always pass through to Emacs
-       (setq exwm-input-prefix-keys
-	     '(?\C-x
-	       ?\C-u
-	       ?\C-h
-	       ?\M-x
-	       ?\M-`
-	       ?\M-&
-	       ?\M-:
-	       ?\C-\M-j  ;; Buffer list
-	       ?\C-\ ))
-	    (exwm-enable))
-   #+end_src
+# ** exwm
+#    #+begin_src emacs-lisp
+#      ;; (use-package exwm
+#      ;;     :config
+#      ;;     (setq exwm-workspace-number 5)
+#      ;;     ;; (require 'exwm-randr)
+#      ;;     ;; (exwm-randr-enable)
+#      ;;     ;; These keys should always pass through to Emacs
+#      ;;     (setq exwm-input-prefix-keys
+#      ;; 	  '(?\C-x
+#      ;; 	    ?\C-u
+#      ;; 	    ?\C-h
+#      ;; 	    ?\M-x
+#      ;; 	    ?\M-`
+#      ;; 	    ?\M-&
+#      ;; 	    ?\M-:
+#      ;; 	    ?\C-\M-j  ;; Buffer list
+#      ;; 	    ?\C-\ ))
+#      ;; 	 (exwm-enable))
+#      (require 'exwm)
+#      (require 'exwm-config)
+#      (exwm-config-example)
+#    #+end_src
 
