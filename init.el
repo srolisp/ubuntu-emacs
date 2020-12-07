@@ -49,7 +49,9 @@
   (set-frame-parameter (selected-frame) 'alpha (list 80 80))
   (add-to-list 'default-frame-alist '(alpha . 80)))
 
-(setq backup-directory-alist `(("." . ,(concat user-emacs-directory ".saves"))))
+(setq backup-directory-alist `(("." . ,(concat user-emacs-directory ".saves"))))      
+
+(show-paren-mode)
 
 (require 'package)
 
@@ -140,7 +142,9 @@
 	  (,(kbd "<f8>") . toggle-korean-input-method)
 	  (,(kbd "<XF86AudioLowerVolume>") . (lambda () (interactive) (shell-command "amixer -D pulse -q sset Master 5%-")))
 	  (,(kbd "<XF86AudioRaiseVolume>") . (lambda () (interactive) (shell-command "amixer -D pulse -q sset Master 5%+")))
-	  (,(kbd "<XF86AudioMute>") . (lambda () (interactive) (shell-command "amixer -D pulse -q sset Master 1+ toggle")))))
+	  (,(kbd "<XF86AudioMute>") . (lambda () (interactive) (shell-command "amixer -D pulse -q sset Master 1+ toggle")))
+	  (,(kbd "<XF86MonBrightnessUp>") . (lambda () (interactive) (shell-command "xbacklight -inc 10")))
+	  (,(kbd "<XF86MonBrightnessDown>") . (lambda () (interactive) (shell-command "xbacklight -dec 10")))))
   ;;   (define-key exwm-mode-map [?\C-q] #'exwm-input-send-next-key)
   ;; (define-key exwm-mode-map (kbd "S-SPC")  #'toggle-korean-input-method)
 

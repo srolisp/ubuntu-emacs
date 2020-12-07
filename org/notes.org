@@ -1,2 +1,3 @@
 * DONE apply anti-aliasing to hangul font in emacs
 
+* TODO to work XF86MonBrightnessDown(Up) key
