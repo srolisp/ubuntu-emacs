@@ -20,6 +20,11 @@
 (column-number-mode)
 (display-battery-mode 1)
 (display-time-mode 1)
+(setq display-time-day-and-date t)
+;; TODO: not work
+(setq display-time-default-load-average nil)
+(setq display-time-24hr-format t)
+(setq display-time-format "%F %T")
 
 (global-display-line-numbers-mode t)
 ;; TODO: add for pdf something mode. can't remember that mode.
@@ -46,8 +51,8 @@
 (set-face-font 'default ":antialias=false")
 
 (when window-system
-  (set-frame-parameter (selected-frame) 'alpha (list 80 80))
-  (add-to-list 'default-frame-alist '(alpha . 80)))
+  (set-frame-parameter (selected-frame) 'alpha (list 90 90))
+  (add-to-list 'default-frame-alist '(alpha . 90)))
 
 (setq backup-directory-alist `(("." . ,(concat user-emacs-directory ".saves"))))      
 
@@ -113,23 +118,47 @@
 (use-package magit
   :bind (("C-c m g" . magit-status)))
 
-(defun wm-xmodmap()
+(defun xrl/run-in-background (command)
+  (let ((command-parts (split-string command "[ ]+")))
+    (apply #'call-process `(,(car command-parts) nil 0 nil ,@(cdr command-parts)))))
+
+(defun xrl/set-wallpaper ()
   (interactive)
-  (call-process "xmodmap" nil (get-buffer-create "wm") nil
-		(expand-file-name "~/.emacs.d/exwm/xmodmap_original")))
-(add-to-list 'after-init-hook 'wm-xmodmap)
-;; (Wm-xmodmap)
+  ;; NOTE: You will need to update this to a valid background path!
+  (start-process-shell-command
+    "feh" nil  "feh --bg-scale /usr/share/backgrounds/This_Is_Bionic_Beaver_by_Pierre_Cante.jpg"))
+
 (use-package exwm
   :config
-  (require 'exwm)
-  (require 'exwm-config)
-  ;; (exwm-config-default)
-  ;;   ;;     ;; (require 'exwm-randr)
-  ;;   ;;     ;; (exwm-randr-enable)
-  ;;   ;;     ;; These keys should always pass through to Emacs
+
+  (setq exwm-workspace-number 5)
+
+  (add-hook 'exwm-update-class-hook (lambda () (exwm-workspace-rename-buffer exwm-class-name)))
+  (add-hook 'exwm-update-title-hook (lambda ()
+                                      (pcase exwm-class-name
+                                        ("Google-chrome" (exwm-workspace-rename-buffer (format "Chrome: %s" exwm-title))))))
+  (add-hook 'exwm-manage-finish-hook (lambda ()
+                                       (pcase exwm-class-name
+					 ("Chrome" (exwm-workspace-move-window 0))
+					 )))
+
+  (add-hook 'exwm-init-hook (lambda () (exwm-workspace-switch-create 1)))
+
+  (start-process-shell-command "xmodmap" nil "xmodmap ~/.emacs.d/exwm/Xmodmap")
+
+  (xrl/run-in-background "nm-applet")
+  (xrl/run-in-background "pasystray")
+  (xrl/run-in-background "blueman-applet")
+
   (setq exwm-input-global-keys
 	`(([?\s-r] . exwm-reset)
 	  ([?\s-w] . exwm-workspace-switch)
+
+	  ([C-left] . windmove-left)
+	  ([C-right] . windmove-right)
+	  ([C-up] . windmove-up)
+	  ([C-down] . windmove-down)
+
 	  ,@(mapcar (lambda (i)
 		      `(,(kbd (format "s-%d" i)) .
 			(lambda ()
@@ -139,6 +168,7 @@
 	  ([?\s-&] . (lambda (command)
 		       (interactive (list (read-shell-command "$ ")))
 		       (start-process-shell-command command nil command)))
+	  ([?\s-`] . (lambda () (interactive) (exwm-workspace-switch-create 0)))
 	  (,(kbd "<f8>") . toggle-korean-input-method)
 	  (,(kbd "<XF86AudioLowerVolume>") . (lambda () (interactive) (shell-command "amixer -D pulse -q sset Master 5%-")))
 	  (,(kbd "<XF86AudioRaiseVolume>") . (lambda () (interactive) (shell-command "amixer -D pulse -q sset Master 5%+")))
@@ -148,16 +178,16 @@
   ;;   (define-key exwm-mode-map [?\C-q] #'exwm-input-send-next-key)
   ;; (define-key exwm-mode-map (kbd "S-SPC")  #'toggle-korean-input-method)
 
-  ;;   (setq exwm-input-prefix-keys
-  ;; 	'(?\C-x
-  ;; 	  ?\C-u
-  ;; 	  ?\C-h
-  ;; 	  ?\M-x
-  ;; 	  ?\M-`
-  ;; 	  ?\M-&
-  ;; 	  ?\M-:
-  ;; 	  ?\C-\M-j  ;; Buffer list
-  ;; 	  ?\C-\ ))
+  (setq exwm-input-prefix-keys
+	'(?\C-x
+	  ?\C-u
+	  ?\C-h
+	  ?\M-x
+	  ?\M-`
+	  ?\M-&
+	  ?\M-:
+	  ?\
+	  ))
   ;; toggle-korean-input-method
   (setq exwm-input-simulation-keys
 	'(
@@ -174,6 +204,7 @@
 	  ([?\C-v] . [next])
 	  ([?\C-d] . [delete])
 	  ([?\C-k] . [S-end delete])
+	  ([?\C-m] . [S-SPC])
 	  ;; cut/paste.
 	  ;; ([?\C-w] . [?\C-x])
 	  ([?\M-w] . [?\C-c])
@@ -182,39 +213,24 @@
 	  ([?\C-s] . [?\C-f])
 	  ;; ([?\C-b] . [left])
 	  ))
-  ;;   (setq exwm-workspace-number 4)
-  ;;   (require 'exwm-randr)
-  ;;   (setq exwm-randr-workspace-output-plist '(0 "VGA1"))
-  ;;   (add-hook 'exwm-randr-screen-change-hook
-  ;; 	    (lambda ()
-  ;; 	      (start-process-shell-command
-  ;; 	       "xrandr" nil "xrandr --output VGA1 --left-of LVDS1 --auto")))
-  ;;   (exwm-randr-enable)
-  ;;   (defun exwm-change-screen-hook ()
-  ;;     (let ((xrandr-output-regexp "\n\\([^ ]+\\) connected ")
-  ;; 	  default-output)
-  ;;       (with-temp-buffer
-  ;; 	(call-process "xrandr" nil t nil)
-  ;; 	(goto-char (point-min))
-  ;; 	(re-search-forward xrandr-output-regexp nil 'noerror)
-  ;; 	(setq default-output (match-string 1))
-  ;; 	(forward-line)
-  ;; 	(if (not (re-search-forward xrandr-output-regexp nil 'noerror))
-  ;; 	    (call-process "xrandr" nil nil nil "--output" default-output "--auto")
-  ;; 	  (call-process
-  ;; 	   "xrandr" nil nil nil
-  ;; 	   "--output" (match-string 1) "--primary" "--auto"
-  ;; 	   "--output" default-output "--off")
-  ;; 	  (setq exwm-randr-workspace-output-plist (list 0 (match-string 1)))))))
+  (require 'exwm-randr)
 
-  ;;   (setq exwm-workspace-number 4)
+  (setq exwm-randr-workspace-output-plist '(0 "eDP-1" 1 "DP-1"))
+  (add-hook 'exwm-randr-screen-change-hook
+	    (lambda ()
+	      (start-process-shell-command
+	       "xrandr" nil "xrandr --output eDP-1 --left-of DP-1 --auto")))
+  (exwm-randr-enable)
+
+  (xrl/set-wallpaper)
+
+  (require 'exwm-systemtray)
+  (setq exwm-systemtray-height 12)
+  (exwm-systemtray-enable)
+
+  (exwm-input-set-key (kbd "s-SPC") 'counsel-linux-app)
+
   (exwm-enable))
-
-(use-package exwm-systemtray
-:ensure nil
-:config
-(setq exwm-systemtray-height 24)
-(exwm-systemtray-enable))
 
 (setq org-hide-leading-stars t)
 
