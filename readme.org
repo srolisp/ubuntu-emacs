@@ -192,8 +192,7 @@
                                              ("Google-chrome" (exwm-workspace-rename-buffer (format "Chrome: %s" exwm-title))))))
        (add-hook 'exwm-manage-finish-hook (lambda ()
                                             (pcase exwm-class-name
-					      ("Chrome" (exwm-workspace-move-window 0))
-					      )))
+					      ("Chrome" (exwm-workspace-move-window 0)))))
 
        (add-hook 'exwm-init-hook (lambda () (exwm-workspace-switch-create 1)))
 

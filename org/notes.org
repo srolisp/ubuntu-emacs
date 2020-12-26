@@ -1,3 +1,7 @@
 * DONE apply anti-aliasing to hangul font in emacs
 
 * TODO to work XF86MonBrightnessDown(Up) key
+
+* TODO 노트북만 켰을 때 google 크롬 열때 딜레이랑 버그가 있음
+  emacs-xrandr 쪽 문제인것 같다. 외부 모니터 같이 연결한 설정이라
+  그런것 같다. 외부 모니터 연결후 google 크롬 실행하면 정상적으로 작동된다.
